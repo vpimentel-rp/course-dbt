@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: stg_users
+    description: basic information about greenery users
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      - name: address_id
+        tests:
+          - not_null
+  - name: stg_addresses
+    description: geographic information about greenery users
+    columns:
+      - name: address_id
+        tests:
+          - unique
+          - not_null
+      - name: zip_code
+        tests:
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              value: 5
+  - name: stg_events
+    description: website event information
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+      - name: session_id
+        tests:
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_id
+  - name: stg_orders
+    description: order status, cost and shipping information
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('stg_events')
+              field: order_id
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_id
+      - name: address_id
+        tests:
+          - not_null
+  - name: stg_products
+    description: inventory information
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: inventory
+        tests:
+          - positive_values
+  - name: stg_order_items
+    description: product and quantity information for orders
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: quantity
+        tests:
+          - positive_values
+  - name: stg_promos
+    description: discount/promotional information
+    columns:
+      - name: discount
+        tests:
+          - positive_values
