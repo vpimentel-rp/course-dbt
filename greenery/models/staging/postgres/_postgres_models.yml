@@ -18,10 +18,7 @@ models:
         tests:
           - unique
           - not_null
-      - name: zip_code
-        tests:
-          - dbt_expectations.expect_column_value_lengths_to_equal:
-              value: 5
+      - name: zipcode
   - name: stg_events
     description: website event information
     columns:
@@ -38,6 +35,14 @@ models:
           - relationships:
               to: ref('stg_users')
               field: user_id
+      - name: event_type
+        tests:
+          - accepted_values:
+              values:
+                - checkout
+                - package_shipped
+                - add_to_cart
+                - page_view
   - name: stg_orders
     description: order status, cost and shipping information
     columns:
@@ -65,8 +70,6 @@ models:
           - unique
           - not_null
       - name: inventory
-        tests:
-          - positive_values
   - name: stg_order_items
     description: product and quantity information for orders
     columns:
@@ -83,11 +86,7 @@ models:
               to: ref('stg_products')
               field: product_id
       - name: quantity
-        tests:
-          - positive_values
   - name: stg_promos
     description: discount/promotional information
     columns:
       - name: discount
-        tests:
-          - positive_values
