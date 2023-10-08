@@ -1,0 +1,16 @@
+version: 2
+
+exposures:  
+- name: product_funnel_dashboard
+  label: Product Funnel Dashboard
+  description: Product funnel models
+  type: dashboard
+  maturity: high
+  url: https://app.sigmacomputing.com/corise-dbt/workbook/workbook-2KFsHirCJzm7S41DCvramA
+  owner:
+    name: Victor Pimentel
+    email: vpimentel@ravenpack.com
+  depends_on:
+      - ref('fact_product_funnel')
+      - ref('fact_product_conversion_rate')
+      - ref('fact_page_views')
